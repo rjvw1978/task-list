@@ -42,16 +42,18 @@ export class LoginComponent {
     return errors ? (errors['required'] ? 'Password is required.' : null) : null;
   }
 
-  login(event:Event) {
-    console.log('Not logged in');
-    //event.preventDefault();
-    this.router.navigateByUrl('tasks');
-
+  login() {
+    
     if (this.isFormValid)
+    { 
+      if (this.username.value=="iva@gmail.com" && this.password.value=="1234")
+      {
+        this.router.navigateByUrl('tasks');
+      }
+    }
+    else
     {
-     
-      this.router.navigateByUrl('tasks');
-
+      this.loginForm.markAllAsTouched();
     }
   }
 }
