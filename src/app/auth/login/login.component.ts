@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
+import { Firestore } from '@angular/fire/firestore';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { TasksFirebaseService } from '../../services/tasks-firebase.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +15,7 @@ export class LoginComponent {
 
   loginForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private router: Router) {
+  constructor(private formBuilder: FormBuilder, private router: Router, private firestore:Firestore, private taskFirestoreService: TasksFirebaseService) {
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
@@ -46,10 +48,18 @@ export class LoginComponent {
     
     if (this.isFormValid)
     { 
-      if (this.username.value=="iva@gmail.com" && this.password.value=="1234")
-      {
-        this.router.navigateByUrl('tasks');
-      }
+      this.taskFirestoreService.login(this.username.value, this.password.value).then((data) =>
+      { 
+        if (data)
+        {
+          this.router.navigateByUrl('tasks');
+        }
+        else {
+
+          this.loginForm.markAllAsTouched();
+        }
+      })
+      
     }
     else
     {
