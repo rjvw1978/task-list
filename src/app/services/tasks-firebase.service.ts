@@ -9,10 +9,7 @@ import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
   providedIn: 'root'
 })
 export class TasksFirebaseService {
-  userId =  localStorage.getItem("userId") ? localStorage.getItem("userId") : "";
-  route= `users/${this.userId}/tasks`.replace(/"/g, '')
-  
-  tasksCollection=collection(this.firestore,this.route);
+
   usersCollection=collection(this.firestore,"users");
 
   constructor(private firestore:Firestore) { }
@@ -31,8 +28,9 @@ export class TasksFirebaseService {
       return false;
   }
   obtenerTask(): Observable<any> 
-  {
-    return collectionData(this.tasksCollection,{
+  { const userId =  localStorage.getItem("userId") ? localStorage.getItem("userId") : "";
+    const route= `users/${userId}/tasks`.replace(/"/g, '')
+    return collectionData(collection(this.firestore,route),{
       idField:'id'
     }) as Observable<any>;
   }
