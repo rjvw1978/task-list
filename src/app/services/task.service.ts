@@ -1,17 +1,16 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  taskList:any=[
-    {id:1, title: 'Task A1', description: 'Task 1 description', status:'Completed'},
-    {id:2,title: 'Task A2', description: 'Task 2 description', status:'InProgress'},
-   ]
-  constructor() { }
+  taskList:any;
+  constructor(private http:HttpClient) { }
 
-  obtenerListaDeTareas()
+  obtenerListaDeTareas():Observable<any>
   {
-   return this.taskList;
+   return this.http.get("data/tasks.json");
   }
 }
