@@ -30,10 +30,6 @@ export class LoginComponent {
     return this.loginForm.controls['password'];
   }
 
-  get isFormValid() {
-    return this.loginForm.valid;
-  }
-
   get usernameErrors() {
     const errors = this.username.errors;
     return errors ? (errors['required'] ? 'Username is required.' : errors['email'] ? 'Please enter a valid email address.' : null) : null;
@@ -46,19 +42,27 @@ export class LoginComponent {
 
   login() {
     
-    if (this.isFormValid)
+    if (this.loginForm.valid)
     { 
-      this.taskFirestoreService.login(this.username.value, this.password.value).then((data) =>
-      { 
-        if (data)
-        {
-          this.router.navigateByUrl('tasks');
-        }
-        else {
-
-          this.loginForm.markAllAsTouched();
-        }
-      })
+      this.taskFirestoreService.login(this.username.value, this.password.value).then(
+        (userData) =>
+          { 
+            if (userData!= undefined && userData != null)
+            {
+              if (userData.role=="user")
+              {
+                this.router.navigateByUrl('tasks');
+              }
+              else if (userData.role=="admin")
+                {
+                alert ("Usuario ADMIN")
+              }
+            }
+            else {
+             // this.router.navigateByUrl('login');
+              this.loginForm.markAllAsTouched();
+            }
+          })
       
     }
     else
