@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { getDocs, query, where } from 'firebase/firestore';
-import { Observable } from 'rxjs';
-
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +9,8 @@ import { Observable } from 'rxjs';
 export class TasksFirebaseService {
 
   usersCollection=collection(this.firestore,"users");
+  userLoginOn:BehaviorSubject<boolean>=new BehaviorSubject<boolean>(false);
+  userRole:BehaviorSubject<string>=new BehaviorSubject<string>("invitado");
 
   constructor(private firestore:Firestore) { }
 
@@ -22,10 +23,31 @@ export class TasksFirebaseService {
       userDoc = JSON.parse(JSON.stringify(doc.data()))
       localStorage.setItem("userId",JSON.parse(JSON.stringify(doc.id)));
       console.log(JSON.stringify(doc.id)); //guarda el dato dentro ""
-      console.log(doc.id, " => ", doc.data());}
+      console.log(doc.id, " => ", doc.data());
+      //behaviors
+      this.userLoginOn.next(true);
+      this.userRole.next(userDoc.role);
+      }
     );
     return userDoc
   }
+
+  get UserLoginOn():Observable<boolean>
+  {
+    return this.userLoginOn.asObservable()
+  }
+
+  get UserRole():Observable<string>
+  {
+    return this.userRole.asObservable();
+  }
+
+  cerrarSesion(){
+    this.userLoginOn.next(false);
+    this.userRole.next("invitado");
+    localStorage.removeItem("userId");
+  }
+
   obtenerTask(): Observable<any> 
   { const userId =  localStorage.getItem("userId") ? localStorage.getItem("userId") : "";
     const route= `users/${userId}/tasks`
